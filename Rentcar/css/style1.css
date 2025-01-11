@@ -1,0 +1,129 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.wrapper {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #00264d; /* Color principal */
+    color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.sidebar h3 {
+    text-align: center;
+    padding: 20px 0;
+    margin: 0;
+    font-weight: bold;
+    background-color: #001a33; /* Segundo color */
+}
+
+.sidebar .nav-link {
+    color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sidebar .nav-link i {
+    font-size: 1.2rem;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #001a33;
+}
+
+/* Content */
+.content {
+    margin-left: 250px;
+    padding: 20px;
+    flex-grow: 1;
+    background-color: #f8f9fa;
+}
+
+.hero {
+    background-color: #00264d; /* Color principal */
+    color: #fff;
+    text-align: center;
+    padding: 50px 0;
+    margin-bottom: 20px;
+}
+
+/* Cards & Tables */
+.card {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.card-header {
+    background-color: #001a33; /* Segundo color */
+    color: #fff;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f2f2f2;
+}
+
+.table-striped tbody tr:hover {
+    background-color: #d9d9d9;
+}
+
+/* Footer */
+footer {
+    background-color: #001a33; /* Segundo color */
+    color: #fff;
+    padding: 20px 0;
+}
+
+footer h5 {
+    color: #ffcc00; /* Resaltado */
+}
+
+footer a {
+    color: #fff;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+.btn-primary {
+    background-color: #00264d;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #001a33;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .content {
+        margin-left: 0;
+    }
+
+    footer {
+        text-align: center;
+    }
+}
