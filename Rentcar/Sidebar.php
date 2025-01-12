@@ -6,23 +6,35 @@
     <br>
     <a href="/usuario/View/Index.php" class="nav-link">
         <span>Gestión de Usuarios</span>
-        <i class="fas fa-users"></i>
+        <i class="fas fa-user-cog"></i>
     </a>
     <a href="/tiposvehiculos/View/Index.php" class="nav-link">
             <span>Gestión Tipos de Vehículos</span>
-            <i class="fas fa-car"></i>
+            <i class="fas fa-list-alt"></i>
     </a>
     <a href="/marcas/View/Index.php" class="nav-link">
             <span>Gestión Marcas</span>
-            <i class="fas fa-car "></i>
+            <i class="fas fa-tag"></i>
     </a>
     <a href="/modelos/View/Index.php" class="nav-link">
             <span>Gestión Modelos</span>
-            <i class="fas fa-car-side "></i>
+            <i class="fas fa-car-side"></i>
     </a>
     <a href="/tiposcombustible/View/Index.php" class="nav-link" title="Gestión de Tipos de Combustible">
     <span>Gestión Tipos de Combustible</span>
     <i class="fas fa-gas-pump"></i>
+    </a>
+    <a href="/Vehículos/view/index.php" class="nav-link">
+            <span>Gestión Vehículos</span>
+            <i class="fas fa-car"></i>
+    </a>
+    <a href="/Clientes/view/index.php" class="nav-link">
+            <span>Gestión Clientes</span>
+            <i class="fas fa-user-friends"></i>
+    </a>
+    <a href="/Empleados/view/index.php" class="nav-link">
+            <span>Gestión Empleados</span>
+            <i class="fas fa-users-cog"></i>
     </a>
 
     <a href="#" class="nav-link">

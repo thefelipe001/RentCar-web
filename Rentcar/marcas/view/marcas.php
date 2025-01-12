@@ -38,44 +38,62 @@ try {
             }
             break;
 
-        case 'read':
-            try {
-                $draw = intval($_POST['draw'] ?? 1);
-                $start = intval($_POST['start'] ?? 0);
-                $length = intval($_POST['length'] ?? 10);
-                $search = $_POST['search']['value'] ?? '';
-
-                $stmtTotal = $db->prepare("SELECT COUNT(*) AS total FROM Marcas");
-                $stmtTotal->execute();
-                $recordsTotal = $stmtTotal->fetch(PDO::FETCH_ASSOC)['total'];
-
-                $query = "SELECT IdMarca,Descripcion, Estado FROM Marcas";
-                if (!empty($search)) {
-                    $query .= " WHERE Descripcion LIKE :search OR IdMarca LIKE :search";
+            case 'read':
+                try {
+                    $draw = intval($_POST['draw'] ?? 1);
+                    $start = intval($_POST['start'] ?? 0);
+                    $length = intval($_POST['length'] ?? 10);
+                    $search = $_POST['search']['value'] ?? '';
+            
+                    // Total de registros en la tabla
+                    $stmtTotal = $db->prepare("SELECT COUNT(*) AS total FROM Marcas");
+                    $stmtTotal->execute();
+                    $recordsTotal = $stmtTotal->fetch(PDO::FETCH_ASSOC)['total'];
+            
+                    // Total de registros filtrados
+                    $queryFiltered = "SELECT COUNT(*) AS total FROM Marcas";
+                    if (!empty($search)) {
+                        $queryFiltered .= " WHERE Descripcion LIKE :search OR IdMarca LIKE :search";
+                    }
+                    $stmtFiltered = $db->prepare($queryFiltered);
+                    if (!empty($search)) {
+                        $stmtFiltered->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
+                    }
+                    $stmtFiltered->execute();
+                    $recordsFiltered = $stmtFiltered->fetch(PDO::FETCH_ASSOC)['total'];
+            
+                    // Consulta principal con paginación
+                    $query = "SELECT IdMarca, Descripcion, Estado FROM Marcas";
+                    if (!empty($search)) {
+                        $query .= " WHERE Descripcion LIKE :search OR IdMarca LIKE :search";
+                    }
+                    $query .= " LIMIT :start, :length";
+            
+                    $stmt = $db->prepare($query);
+                    if (!empty($search)) {
+                        $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
+                    }
+                    $stmt->bindValue(':start', $start, PDO::PARAM_INT);
+                    $stmt->bindValue(':length', $length, PDO::PARAM_INT);
+                    $stmt->execute();
+            
+                    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+                    // Respuesta en formato JSON
+                    echo json_encode([
+                        "draw" => $draw,
+                        "recordsTotal" => $recordsTotal,       // Total de registros sin filtro
+                        "recordsFiltered" => $recordsFiltered, // Total de registros después del filtro
+                        "data" => $data                        // Datos para la tabla
+                    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                } catch (Exception $e) {
+                    http_response_code(500);
+                    echo json_encode(["status" => "error", "message" => $e->getMessage()]);
                 }
-                $query .= " LIMIT :start, :length";
+                break;
+                
 
-                $stmt = $db->prepare($query);
-                if (!empty($search)) {
-                    $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
-                }
-                $stmt->bindValue(':start', $start, PDO::PARAM_INT);
-                $stmt->bindValue(':length', $length, PDO::PARAM_INT);
-                $stmt->execute();
-
-                $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                echo json_encode([
-                    "draw" => $draw,
-                    "recordsTotal" => $recordsTotal,
-                    "recordsFiltered" => count($data),
-                    "data" => $data
-                ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-            } catch (Exception $e) {
-                http_response_code(500);
-                echo json_encode(["status" => "error", "message" => $e->getMessage()]);
-            }
-            break;
+       
         case 'create': // Crear un nuevo registro en `Marcas`
             if (empty($_POST['descripcion']) || !isset($_POST['estado'])) {
                 echo json_encode(['status' => 'error', 'message' => 'Datos incompletos']);

@@ -37,47 +37,61 @@ try {
             }
             break;
         
-       
-       
-       
+
             case 'read':
-            try {
-                $draw = intval($_POST['draw'] ?? 1);
-                $start = intval($_POST['start'] ?? 0);
-                $length = intval($_POST['length'] ?? 10);
-                $search = $_POST['search']['value'] ?? '';
-
-                $stmtTotal = $db->prepare("SELECT COUNT(*) AS total FROM USUARIO");
-                $stmtTotal->execute();
-                $recordsTotal = $stmtTotal->fetch(PDO::FETCH_ASSOC)['total'];
-
-                $query = "SELECT IdUsuario, Nombres, Apellidos, Correo, Activo FROM USUARIO";
-                if (!empty($search)) {
-                    $query .= " WHERE Nombres LIKE :search OR Apellidos LIKE :search OR Correo LIKE :search OR IdUsuario LIKE :search";
+                try {
+                    $draw = intval($_POST['draw'] ?? 1);
+                    $start = intval($_POST['start'] ?? 0);
+                    $length = intval($_POST['length'] ?? 10);
+                    $search = $_POST['search']['value'] ?? '';
+            
+                    // Total de registros en la tabla
+                    $stmtTotal = $db->prepare("SELECT COUNT(*) AS total FROM USUARIO");
+                    $stmtTotal->execute();
+                    $recordsTotal = $stmtTotal->fetch(PDO::FETCH_ASSOC)['total'];
+            
+                    // Total de registros filtrados (aplicando el término de búsqueda)
+                    $queryFiltered = "SELECT COUNT(*) AS total FROM USUARIO";
+                    if (!empty($search)) {
+                        $queryFiltered .= " WHERE Nombres LIKE :search OR Apellidos LIKE :search OR Correo LIKE :search OR IdUsuario LIKE :search";
+                    }
+                    $stmtFiltered = $db->prepare($queryFiltered);
+                    if (!empty($search)) {
+                        $stmtFiltered->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
+                    }
+                    $stmtFiltered->execute();
+                    $recordsFiltered = $stmtFiltered->fetch(PDO::FETCH_ASSOC)['total'];
+            
+                    // Consulta principal para obtener los datos con paginación
+                    $query = "SELECT IdUsuario, Nombres, Apellidos, Correo, Activo FROM USUARIO";
+                    if (!empty($search)) {
+                        $query .= " WHERE Nombres LIKE :search OR Apellidos LIKE :search OR Correo LIKE :search OR IdUsuario LIKE :search";
+                    }
+                    $query .= " LIMIT :start, :length";
+            
+                    $stmt = $db->prepare($query);
+                    if (!empty($search)) {
+                        $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
+                    }
+                    $stmt->bindValue(':start', $start, PDO::PARAM_INT);
+                    $stmt->bindValue(':length', $length, PDO::PARAM_INT);
+                    $stmt->execute();
+            
+                    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+                    // Respuesta en formato JSON
+                    echo json_encode([
+                        "draw" => $draw,
+                        "recordsTotal" => $recordsTotal,       // Total de registros sin filtrar
+                        "recordsFiltered" => $recordsFiltered, // Total de registros filtrados
+                        "data" => $data                        // Datos para la tabla
+                    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                } catch (Exception $e) {
+                    http_response_code(500);
+                    echo json_encode(["status" => "error", "message" => $e->getMessage()]);
                 }
-                $query .= " LIMIT :start, :length";
-
-                $stmt = $db->prepare($query);
-                if (!empty($search)) {
-                    $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
-                }
-                $stmt->bindValue(':start', $start, PDO::PARAM_INT);
-                $stmt->bindValue(':length', $length, PDO::PARAM_INT);
-                $stmt->execute();
-
-                $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                echo json_encode([
-                    "draw" => $draw,
-                    "recordsTotal" => $recordsTotal,
-                    "recordsFiltered" => count($data),
-                    "data" => $data
-                ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-            } catch (Exception $e) {
-                http_response_code(500);
-                echo json_encode(["status" => "error", "message" => $e->getMessage()]);
-            }
-            break;
+                break;
+            
 
             case 'create':
                 try {

@@ -45,12 +45,29 @@ try {
                     $length = intval($_POST['length'] ?? 10);
                     $search = $_POST['search']['value'] ?? '';
             
-                    // Total de registros
+                    // Total de registros sin filtro
                     $stmtTotal = $db->prepare("SELECT COUNT(*) AS total FROM Modelos");
                     $stmtTotal->execute();
                     $recordsTotal = $stmtTotal->fetch(PDO::FETCH_ASSOC)['total'];
             
-                    // Query principal con INNER JOIN
+                    // Total de registros filtrados
+                    $queryFiltered = "
+                        SELECT COUNT(*) AS total 
+                        FROM Modelos m
+                        INNER JOIN Marcas ma ON m.IdMarca = ma.IdMarca
+                    ";
+                    if (!empty($search)) {
+                        $queryFiltered .= " WHERE m.Descripcion LIKE :search OR ma.Descripcion LIKE :search OR m.IdModelo LIKE :search";
+                    }
+            
+                    $stmtFiltered = $db->prepare($queryFiltered);
+                    if (!empty($search)) {
+                        $stmtFiltered->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
+                    }
+                    $stmtFiltered->execute();
+                    $recordsFiltered = $stmtFiltered->fetch(PDO::FETCH_ASSOC)['total'];
+            
+                    // Consulta principal con INNER JOIN y paginación
                     $query = "
                         SELECT 
                             m.IdModelo,
@@ -58,7 +75,6 @@ try {
                             m.Descripcion AS Descripcion,
                             ma.IdMarca,
                             m.Estado
-                        
                         FROM 
                             Modelos m
                         INNER JOIN 
@@ -66,13 +82,9 @@ try {
                         ON 
                             m.IdMarca = ma.IdMarca
                     ";
-            
-                    // Búsqueda
                     if (!empty($search)) {
                         $query .= " WHERE m.Descripcion LIKE :search OR ma.Descripcion LIKE :search OR m.IdModelo LIKE :search";
                     }
-            
-                    // Limitar resultados para paginación
                     $query .= " LIMIT :start, :length";
             
                     $stmt = $db->prepare($query);
@@ -85,17 +97,19 @@ try {
             
                     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
+                    // Respuesta en formato JSON
                     echo json_encode([
                         "draw" => $draw,
-                        "recordsTotal" => $recordsTotal,
-                        "recordsFiltered" => count($data),
-                        "data" => $data
+                        "recordsTotal" => $recordsTotal,       // Total de registros sin filtro
+                        "recordsFiltered" => $recordsFiltered, // Total de registros después del filtro
+                        "data" => $data                        // Datos paginados
                     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                 } catch (Exception $e) {
                     http_response_code(500);
                     echo json_encode(["status" => "error", "message" => $e->getMessage()]);
                 }
                 break;
+            
             
 
        
@@ -153,7 +167,8 @@ try {
             case 'detalleMarca':
                 try {
                     // Seleccionar todas las marcas
-                    $stmt = $db->prepare("SELECT IdMarca, Descripcion, Estado FROM Marcas");
+                    $stmt = $db->prepare("SELECT IdMarca, Descripcion, Estado FROM Marcas WHERE Estado != 0 ORDER BY Descripcion ASC");
+
                     $stmt->execute();
             
                     // Obtener todos los registros
