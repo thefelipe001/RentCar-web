@@ -36,12 +36,22 @@
             <span>Gestión Empleados</span>
             <i class="fas fa-users-cog"></i>
     </a>
-
-    <a href="#" class="nav-link">
-        <span>Servicios</span>
-        <i class="fas fa-cogs"></i>
+    <a href="/Inspeccion/view/index.php" class="nav-link">
+            <span>Proceso de Inspección</span>
+            <i class="fas fa-clipboard-list"></i>
     </a>
-    <a href="#" class="nav-link">
+    <a href="/rentadevolucion/view/index.php" class="nav-link">
+            <span>Proceso de Renta y Devolución</span>
+            <i class="fas fa-clipboard-list me-2"></i>
+    </a>
+
+    <a href="/consultarenta/view/index.php" class="nav-link">
+            <span>Consulta Renta</span>
+            <i class="fas fa-clipboard-list"></i>
+     </a>
+
+
+    <a href="/reporteRentas/view/reporteRentas.php" class="nav-link">
         <span>Reportes</span>
         <i class="fas fa-chart-line"></i>
     </a>

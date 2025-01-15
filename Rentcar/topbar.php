@@ -9,7 +9,7 @@
         </div>
         <div class="col-md-6 text-center text-lg-right">
             <div class="d-inline-flex align-items-center">
-                <a class="text-body pl-3" href="">
+                <a class="text-body pl-3" href="/inicio/View/login.php">
                 <i ></i> <strong> Iniciar Sesión</strong>
                 </a>
             </div>

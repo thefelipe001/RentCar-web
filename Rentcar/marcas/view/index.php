@@ -1,3 +1,22 @@
+<?php
+session_start();
+
+// Verificar si el usuario ha iniciado sesión
+if (!isset($_SESSION['usuario']) || empty($_SESSION['usuario']['nombres']) || empty($_SESSION['usuario']['apellidos'])) {
+    header('Location: login.php');
+    exit;
+}
+
+
+$usuario = $_SESSION['usuario'];
+
+
+$rentasActivas = 10; 
+$usuariosRegistrados = 25; 
+$reportesGenerados = 15; 
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -40,6 +59,13 @@
 
         <!-- Content -->
         <div class="content">
+        <div class="header d-flex justify-content-between align-items-center">
+                <button class="btn btn-light btn-toggle-sidebar d-md-none" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h5>Bienvenido, <?php echo htmlspecialchars($usuario['nombres'] . ' ' . $usuario['apellidos']); ?>!</h5>
+                <a href="/inicio/view/logout.php" class="btn btn-danger btn-sm">Cerrar sesión</a>
+            </div>
             <!-- Hero Section -->
             <div class="hero text-center py-4">
                 <h1>Gestión Marcas</h1>

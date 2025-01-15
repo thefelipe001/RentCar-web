@@ -1,4 +1,5 @@
 
+
 <?php
 session_start();
 
@@ -20,14 +21,13 @@ $reportesGenerados = 15;
 
 
 
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Usuarios - Royal Cars</title>
+    <title>Gestión Proceso de renta y devolución - Royal Cars</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -70,19 +70,18 @@ $reportesGenerados = 15;
                 <h5>Bienvenido, <?php echo htmlspecialchars($usuario['nombres'] . ' ' . $usuario['apellidos']); ?>!</h5>
                 <a href="/inicio/view/logout.php" class="btn btn-danger btn-sm">Cerrar sesión</a>
             </div>
-            
             <!-- Hero Section -->
             <div class="hero text-center py-4">
-                <h1>Gestión de Clientes</h1>
-                <p>Administra los clientes de forma rápida y sencilla</p>
+                <h1>Proceso de Renta y Devolución </h1>
+                <p>Administra los Proceso de renta y devolución  de forma rápida y sencilla</p>
             </div>
 
             <!-- Contenedor del título y botón -->
             <div class="container">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0">Lista de Clientes</h5>
+                    <h5 class="mb-0">Lista de Proceso de renta y evolución </h5>
                     <button class="btn" style="background-color: #20c997; border: none; color: white; padding: 10px 20px; font-size: 16px; border-radius: 5px;" type="button" onclick="abrirModal(null)">
-                        <i class="fas fa-plus"></i> Crear Nuevo
+                        <i class="fas fa-plus"></i> Crear Proceso
                     </button>
                 </div>
 
@@ -97,63 +96,98 @@ $reportesGenerados = 15;
                         </div>
 
                         <!-- Tabla -->
-                        <table id="tabla" class="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nombre Completo</th>
-                                    <th>Cedula</th>
-                                    <th>No. Tarjeta CR</th>
-                                    <th>Límite de Credito</th>
-                                    <th>Tipo Persona</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="userTableBody"></tbody>
-                        </table>
+        <table id="tabla" class="table table-striped table-hover align-middle">
+             <thead>
+            <tr>
+                <th style="width: 5%;">No. Renta</th>
+                <th style="width: 10%;">Empleado</th>
+                <th style="width: 10%;">Vehículo</th>
+                <th style="width: 10%;">Cliente</th>
+                <th style="width: 10%;">Fecha Renta</th>
+                <th style="width: 10%;">Fecha Devolución</th>
+                <th style="width: 10%;">Monto x Día</th>
+                <th style="width: 10%;">Cantidad de días</th>
+                <th style="width: 10%;">Comentario</th>
+                <th style="width: 8%;">Estado</th>
+                <th style="width: 8%;">Acciones</th>
+             </tr>
+        </thead>
+        <tbody id="userTableBody"></tbody>
+        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <?php include '../../footerPrincipal.php'; ?>
-
-<!-- Modal -->
-<div class="modal fade" id="modalCliente" tabindex="-1" aria-labelledby="modalClienteLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog">
+    <!-- Modal Renta y Devolución -->
+<div class="modal fade" id="modalRentaDevolucion" tabindex="-1" aria-labelledby="modalRentaDevolucionLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalClienteLabel"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalRentaDevolucionLabel">Formulario de Renta y Devolución</h5>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
-                <form id="formCliente">
-                    <input type="hidden" id="idCliente" name="idCliente">
+                <form id="formRentaDevolucion">
+                    <!-- ID de Renta (Oculto) -->
+                    <input type="hidden" id="idRenta" name="idRenta">
+
+                    <!-- Empleado -->
                     <div class="mb-3">
-                        <label for="nombre" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="nombre" name="nombre" >
-                    </div>
-                    <div class="mb-3">
-                        <label for="cedula" class="form-label">Cédula</label>
-                        <input type="text" class="form-control" id="cedula" name="cedula" >
-                    </div>
-                    <div class="mb-3">
-                        <label for="numeroTarjetaCR" class="form-label">Número de Tarjeta CR</label>
-                        <input type="text" class="form-control" id="numeroTarjetaCR" name="numeroTarjetaCR">
-                    </div>
-                    <div class="mb-3">
-                        <label for="limiteCredito" class="form-label">Límite de Crédito</label>
-                        <input type="number" class="form-control" id="limiteCredito" name="limiteCredito">
-                    </div>
-                    <div class="mb-3">
-                        <label for="tipoPersona" class="form-label">Tipo de Persona</label>
-                        <select class="form-select" id="tipoPersona" name="tipoPersona" >
-                            <option value="Física">Física</option>
-                            <option value="Jurídica">Jurídica</option>
+                        <label for="idEmpleadoSelect" class="form-label">Empleado</label>
+                        <select id="idEmpleadoSelect" name="idEmpleado" class="form-select" aria-label="Seleccionar empleado">
+                            <option value="" disabled selected>Seleccione un empleado</option>
                         </select>
                     </div>
+
+                    <!-- Vehículo -->
+                    <div class="mb-3">
+                        <label for="idVehiculoSelect" class="form-label">Vehículo</label>
+                        <select id="idVehiculoSelect" name="idVehiculo" class="form-select" aria-label="Seleccionar vehículo">
+                            <option value="" disabled selected>Seleccione un vehículo</option>
+                        </select>
+                    </div>
+
+                    <!-- Cliente -->
+                    <div class="mb-3">
+                        <label for="idClienteSelect" class="form-label">Cliente</label>
+                        <select id="idClienteSelect" name="idCliente" class="form-select" aria-label="Seleccionar cliente">
+                            <option value="" disabled selected>Seleccione un cliente</option>
+                        </select>
+                    </div>
+
+                    <!-- Fecha de Renta -->
+                    <div class="mb-3">
+                        <label for="fechaRenta" class="form-label">Fecha de Renta</label>
+                        <input type="date" class="form-control" id="fechaRenta" name="fechaRenta">
+                    </div>
+
+                    <!-- Fecha de Devolución -->
+                    <div class="mb-3">
+                        <label for="fechaDevolucion" class="form-label">Fecha de Devolución</label>
+                        <input type="date" class="form-control" id="fechaDevolucion" name="fechaDevolucion">
+                    </div>
+
+                    <!-- Monto por Día -->
+                    <div class="mb-3">
+                        <label for="montoDia" class="form-label">Monto por Día</label>
+                        <input type="number" class="form-control" id="montoDia" name="montoDia" step="0.01" min="0">
+                    </div>
+
+                    <!-- Cantidad de Días -->
+                    <div class="mb-3">
+                        <label for="cantidadDias" class="form-label">Cantidad de Días</label>
+                        <input type="number" class="form-control" id="cantidadDias" name="cantidadDias" min="1" >
+                    </div>
+
+                    <!-- Comentario -->
+                    <div class="mb-3">
+                        <label for="comentario" class="form-label">Comentario</label>
+                        <textarea class="form-control" id="comentario" name="comentario" rows="3"></textarea>
+                    </div>
+
+                    <!-- Estado -->
                     <div class="mb-3">
                         <label for="estado" class="form-label">Estado</label>
                         <select class="form-select" id="estado" name="estado">
@@ -165,7 +199,7 @@ $reportesGenerados = 15;
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="submit" form="formCliente" class="btn btn-primary">Guardar</button>
+                <button type="submit" form="formRentaDevolucion" class="btn btn-success">Guardar</button>
             </div>
         </div>
     </div>
@@ -173,8 +207,21 @@ $reportesGenerados = 15;
 
 
 
+
+
+
+
+
+
+
+    <?php include '../../footerPrincipal.php'; ?>
+
+
+
+
+
     <!-- Script Principal -->
-    <script src="../js/clientes.js"></script>
+    <script src="../js/rentadevolucion.js"></script>
 </body>
 
 </html>
