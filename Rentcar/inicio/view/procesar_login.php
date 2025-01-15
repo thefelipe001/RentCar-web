@@ -29,14 +29,15 @@ try {
     // Obtener conexión a la base de datos
     $db = RentCarDB::getInstance()->getConnection();
 
-    // Consulta para verificar si el usuario existe
+    // Consulta para verificar si el usuario existe y validar la contraseña directamente
     $query = "
         SELECT IdUsuario, Nombres, Apellidos, Contrasena, EsAdministrador, Activo
         FROM usuario 
-        WHERE Correo = :correo
+        WHERE Correo = :correo AND Contrasena = :contrasena
     ";
     $stmt = $db->prepare($query);
     $stmt->bindParam(':correo', $correo);
+    $stmt->bindParam(':contrasena', $contrasena);
     $stmt->execute();
 
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -45,7 +46,7 @@ try {
     if (!$user) {
         echo json_encode([
             "success" => false,
-            "message" => "Correo no encontrado."
+            "message" => "El usuario o la contraseña son incorrectos. Por favor, verifique."
         ]);
         exit;
     }
@@ -58,8 +59,6 @@ try {
         ]);
         exit;
     }
-
-   
 
     // Guardar datos del usuario en la sesión
     $_SESSION['usuario'] = [

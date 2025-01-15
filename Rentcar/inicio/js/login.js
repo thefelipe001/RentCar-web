@@ -23,7 +23,7 @@ $('#loginForm').on('submit', function (e) {
                 } else {
                     Swal.fire({
                         title: 'Error',
-                        text: response.message,
+                        text: 'El usuario o la contraseña son incorrectos. Por favor, verifique la información e intente nuevamente',
                         icon: 'error'
                     });
                 }
