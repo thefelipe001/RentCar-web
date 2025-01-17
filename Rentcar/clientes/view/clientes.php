@@ -134,7 +134,7 @@ try {
                         }
                     
                         // Valor por defecto para NumeroTarjetaCR si está vacío
-                        $numeroTarjetaCR = $_POST['tarjetaCR'] ?? null;
+                        $numeroTarjetaCR = $_POST['numeroTarjetaCR'] ?? null;
                     
                         // Preparar la consulta
                         $stmt = $db->prepare("INSERT INTO CLIENTES 
